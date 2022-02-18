@@ -1,9 +1,12 @@
 # Essentials ----
 # Load required packages 
 library(tidyverse)
+library(edgeR)
 
 # Set working directory 
 setwd("D:/AFO/Data/")
+
+
 
 # Count data ----
 #read count data
@@ -14,6 +17,8 @@ counts <- read.delim("GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/GLUCOLDhu
 counts_filtered <- counts %>% 
   select(ends_with("_1")) %>% 
   rename_with(~gsub("_1|X", "", .x))
+
+
 
 # Patient data ----
 #load patient data
@@ -30,56 +35,43 @@ patient_data <- patient_data %>%
   filter(treatment != 1) %>% 
   drop_na()
 
-# Patient characteristics ----
-# Calculate patient characteristics
-#Gender
-patient_data %>% 
-  group_by(geslacht) %>% 
-  count(geslacht)
+#Add a column with the change in lung function after 6 months
+patient_data <- patient_data %>% 
+  mutate(d_fev_pred = fevnapredv3 - fevnapredv1)
 
-#Age
-mean(patient_data$lftv1)
-sd(patient_data$lftv1)
- 
-#smoking status
-patient_data %>% 
-   group_by(rooknuv1) %>% 
-   count(rooknuv1)
- 
-#Smoking history
-mean(patient_data$packyearv1)
-sd(patient_data$packyearv1)
- 
-#FEV1 % pred baseline
-patient_data %>% 
-  summarise_at(vars(fevnapredv1, fevnapredv3, ccqtotalv1, ccqtotalv3, rvtlcpredv1, rvtlcpredv3), 
-               c(mean = "mean", sd = "sd")) %>% 
-  t()
+#Final selection of patients 
+counts_filtered <- counts_filtered %>% 
+  select(which(colnames(counts_filtered) %in% patient_data$idnr))
 
 
 
 
+# RNA-seq data analysis ----
+#Design matrix
+d_fev_pred <- patient_data$d_fev_pred
 
+mm <- model.matrix(~d_fev_pred)
+# mm <- model.matrix(~factor(patient_data$geslacht) + patient_data$lftv1 + d_fev_pred)
 
-
-
-
-
-
-
-
-# Other stuff ----
-#Select samples at baseline
-subset_counts <- counts %>% select(as.character(patient_data$idnr))
-
-d0 <- DGEList(subset_counts)
-d1 <- calcNormFactors(d0)
-
-mm <- model.matrix(~patient_data$geslacht + patient_data$lftv1 + patient_data$delta)
 row.names(mm) <- patient_data$idnr
 
-#????
-y <- estimateDisp(d1, mm, robust=TRUE)
-fit <- glmFit(y, mm)
+#Create a DGEList object
+d0 <- DGEList(counts_filtered)
+
+#Normalise counts
+d1 <- calcNormFactors(d0)
+
+#estimate dispsion
+d2 <- estimateDisp(d1, mm, robust=TRUE)
+
+#
+fit <- glmFit(d2, mm)
 lrt <- glmLRT(fit)
-topTags(lrt)
+
+sign_genes <- topTags(lrt, n=10)
+topTags(lrt, n=10)
+sum(sign_genes$table$FDR<0.05)
+
+
+  
+
