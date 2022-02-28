@@ -29,7 +29,7 @@ patient_data <- patient_data %>%
   select(idnr, treatment, geslacht, lftv1, rookjaar, rooknuv1, packyearv1, 
          ccqtotalv1, ccqtotalv3, rvtlcpredv1, rvtlcpredv3, fevnapredv1, fevnapredv3) 
 
-#Filter for patiens that have RNA-seq available at baseline, no NA in any column and have received no placebo
+#Filter for patients that have RNA-seq available at baseline, no NA in any column and have received no placebo
 patient_data <- patient_data %>% 
   filter(idnr %in% as.numeric(colnames(counts_filtered))) %>% 
   filter(treatment != 1) %>% 
@@ -37,41 +37,41 @@ patient_data <- patient_data %>%
 
 #Add a column with the change in lung function after 6 months
 patient_data <- patient_data %>% 
-  mutate(d_fev_pred = fevnapredv3 - fevnapredv1)
+  mutate(d_fev_pred = fevnapredv3 - fevnapredv1) %>% 
+  mutate(d_ccq = ccqtotalv3 - ccqtotalv1) %>% 
+  mutate(d_rvtlc = rvtlcpredv3 - rvtlcpredv1)
 
-#Final selection of patients 
-counts_filtered <- counts_filtered %>% 
+
+#Final selection of patients
+counts_filtered <- counts_filtered %>%
   select(which(colnames(counts_filtered) %in% patient_data$idnr))
 
+# Analyse RNA-seq data ----
+for (i in select(patient_data, starts_with("d_"))) {
+  #Design matrix
+  mm <- model.matrix(~i)
+  row.names(mm) <- patient_data$idnr
 
-
-
-# RNA-seq data analysis ----
-#Design matrix
-d_fev_pred <- patient_data$d_fev_pred
-
-mm <- model.matrix(~d_fev_pred)
-# mm <- model.matrix(~factor(patient_data$geslacht) + patient_data$lftv1 + d_fev_pred)
-
-row.names(mm) <- patient_data$idnr
-
-#Create a DGEList object
-d0 <- DGEList(counts_filtered)
-
-#Normalise counts
-d1 <- calcNormFactors(d0)
-
-#estimate dispsion
-d2 <- estimateDisp(d1, mm, robust=TRUE)
-
-#
-fit <- glmFit(d2, mm)
-lrt <- glmLRT(fit)
-
-sign_genes <- topTags(lrt, n=10)
-topTags(lrt, n=10)
-sum(sign_genes$table$FDR<0.05)
-
-
+  #Create a DGEList object
+  d0 <- DGEList(counts_filtered)
+  keep <- filterByExpr(d0)
+  d0 <- d0[keep, , keep.lib.sizes=FALSE]
   
+  #Normalize counts
+  d1 <- calcNormFactors(d0)
+  
+  #estimate dispersion
+  d2 <- estimateDisp(d1, mm, robust=TRUE)
+  
+  fit <- glmQLFit(d2, mm)
+  fit <- glmQLFTest(fit)
+  
+  tt <- topTags(fit, n = nrow(d2), adjust.method = "BH")
+  
+  sign_genes <- tt$table %>% 
+    filter(FDR <= 0.05) %>% 
+    count()
+    
+  print(sign_genes)
+}
 
