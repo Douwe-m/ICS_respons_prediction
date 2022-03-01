@@ -18,7 +18,8 @@ counts_filtered <- counts %>%
   select(ends_with("_1")) %>% 
   rename_with(~gsub("_1|X", "", .x))
 
-
+#Gene symbols
+gene_symbols <- read.delim("D:/AFO/Data/GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/genes_info_hg37.csv", sep = ",", header = T)
 
 # Patient data ----
 #load patient data
@@ -46,6 +47,8 @@ patient_data <- patient_data %>%
 counts_filtered <- counts_filtered %>%
   select(which(colnames(counts_filtered) %in% patient_data$idnr))
 
+top_genes <- list()
+
 # Analyse RNA-seq data ----
 for (i in select(patient_data, starts_with("d_"))) {
   #Design matrix
@@ -68,10 +71,11 @@ for (i in select(patient_data, starts_with("d_"))) {
   
   tt <- topTags(fit, n = nrow(d2), adjust.method = "BH")
   
-  sign_genes <- tt$table %>% 
-    filter(FDR <= 0.05) %>% 
-    count()
-    
-  print(sign_genes)
+  top_tt <- tt$table %>%
+    rownames_to_column("ensembl_gene_id") %>%
+    left_join(y = gene_symbols %>% select(ensembl_gene_id, hgnc_symbol), by = "ensembl_gene_id") %>% 
+    distinct()
+  
+  top_genes <- c(list(top_tt), top_genes)
 }
 
