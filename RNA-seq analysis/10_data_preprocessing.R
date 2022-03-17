@@ -24,7 +24,7 @@ patient_data <- patient_data %>%
 counts_filtered <- counts_filtered %>%
   select(which(colnames(counts_filtered) %in% patient_data$idnr))
 
-#Remove the "x" from the columns names of norm_counts
+#Remove the "x" from the column names of norm_counts
 if (exists("norm_counts")){
   norm_counts <- norm_counts %>% 
     rename_with(~gsub("X", "", .x))
