@@ -14,12 +14,19 @@ patient_data <- patient_data %>%
   filter(treatment != 1) %>% 
   drop_na()
 
-#Add a column with the change in lung function after 6 months
+#Add a column with the change in clinical parameters after 6 months
 patient_data <- patient_data %>% 
-  mutate(d_fev_pred = fevnapredv3 - fevnapredv1) %>% 
-  mutate(d_ccq = ccqtotalv3 - ccqtotalv1) %>% 
-  mutate(d_rvtlc = rvtlcpredv3 - rvtlcpredv1)
+  mutate(d_fev_pred = fevnapredv3 - fevnapredv1,
+         d_ccq = ccqtotalv3 - ccqtotalv1,
+         d_rvtlc = rvtlcpredv3 - rvtlcpredv1)
 
 #Final selection of patients
 counts_filtered <- counts_filtered %>%
   select(which(colnames(counts_filtered) %in% patient_data$idnr))
+
+#Remove the "x" from the columns names of norm_counts
+if (exists("norm_counts")){
+  norm_counts <- norm_counts %>% 
+    rename_with(~gsub("X", "", .x))
+}
+
