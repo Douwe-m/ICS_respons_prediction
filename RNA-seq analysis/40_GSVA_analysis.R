@@ -3,7 +3,9 @@
 #2) A collection of gene sets as a list
 
 #Genes of interest
-gene_set <- list("d_ccq" = c("ENSG00000133110", "ENSG00000161905", "ENSG00000264940"))
+gene_set <- list("d_ccq" = DEG_d_ccq %>% 
+                   filter(FDR <= 0.10) %>% 
+                   pull(ensembl_gene_id))
 
 #Calculate GSVA enrichment scores
 gsva_es <- gsva(as.matrix(norm_counts), gene_set)

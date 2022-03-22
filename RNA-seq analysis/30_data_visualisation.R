@@ -1,6 +1,6 @@
 #Scatter plot of expression vs change in clinical parameter
 
-if (sum(DEG_d_ccq$FDR <= 0.05) > 0) {
+if (sum(DEG_d_ccq$FDR <= 0.25) > 0) {
 
   scatter_plot <- norm_counts %>% 
     rename_with(~gsub("X", "", .x)) %>% 
@@ -19,7 +19,7 @@ if (sum(DEG_d_ccq$FDR <= 0.05) > 0) {
          plot = scatter_plot)
 }
 
-if (sum(DEG_d_fev$FDR <= 0.05) > 0) {
+if (sum(DEG_d_fev$FDR <= 0.25) > 0) {
   
   scatter_plot <- norm_counts %>% 
     rename_with(~gsub("X", "", .x)) %>% 
@@ -38,7 +38,7 @@ if (sum(DEG_d_fev$FDR <= 0.05) > 0) {
          plot = scatter_plot)
 }
 
-if (sum(DEG_d_rvtlc$FDR <= 0.05) > 0) {
+if (sum(DEG_d_rvtlc$FDR <= 0.25) > 0) {
   
   scatter_plot <- norm_counts %>% 
     rename_with(~gsub("X", "", .x)) %>% 
@@ -73,7 +73,8 @@ plot <- temp_data %>%
   ggplot(aes(x = expr, y = values)) +
     geom_point() +
     geom_smooth(method = lm, se = F)+
-    facet_wrap(geneID ~ clin_param, scales = "free") 
+    facet_wrap(geneID ~ clin_param, scales = "free") +
+    geom_label(aes(label = patient))
   
 ggsave(filename = "RNA-seq analysis/results/scatter_plot_3_genes.png",
        plot = plot)
@@ -84,6 +85,9 @@ temp_data %>%
   summarise(COR = cor.test(expr, values, method = "spearman", exact = F)$estimate, 
             pval = cor.test(expr, values, method = "spearman", exact = F)$p.value) %>% 
   print()
+
+
+
 
 
 
