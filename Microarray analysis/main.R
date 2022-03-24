@@ -17,3 +17,13 @@ source("Microarray analysis/10__data_preprocessing.R", echo = T)
 
 #Inspect DEGs
 source(here::here("Microarray analysis", "30__inspect_deg.R"), echo = T)
+
+#-------------GSVA analysis with change in clin param over 30 months-------------
+#read data files
+source(here::here("Microarray analysis", "00__load_data.R"), echo = T)
+
+#Pre-process data
+source(here::here("Microarray analysis", "11__v11_data_preprocessing.R"), echo = T)
+
+#GSVA analysis
+source(here::here("Microarray analysis", "30__inspect_deg.R"), echo = T)
