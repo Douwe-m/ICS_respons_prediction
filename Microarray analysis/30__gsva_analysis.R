@@ -1,4 +1,4 @@
-if (sum(DEG_d_fev$FDR <= 0.25) > 0){}
+# if (sum(DEG_d_fev$FDR <= 0.25) > 0){}
 DEG_d_ccq %>% 
   filter(adj.P.Val <= 0.05) %>% 
   count()
@@ -28,8 +28,10 @@ gene_set <- list(
     rownames_to_column("geneID") %>% 
     pull(geneID))
 
+data <- voom(expression_data_cleaned)
+
 #Calculate GSVA enrichment scores
-gsva_es <- gsva(as.matrix(expression_data_cleaned), gene_set)
+gsva_es <- gsva(as.matrix(data), gene_set)
 
 gsva_es_cleaned <- gsva_es %>% 
   t() %>% 
@@ -46,7 +48,7 @@ gsva_es_cleaned <- gsva_es %>%
 gsva_es_cleaned %>% 
   ggplot(aes(x = enrichment_score, y = value)) +
   geom_point() +
-  geom_smooth(method = "lm") +
+  geom_smooth(method = "lm", se = F) +
   labs(x = "Enrichment score", y = "Clinical parameter") +
   facet_wrap(signature ~ clin_param, scales = "free") 
 

@@ -10,7 +10,7 @@ for (i in 2:ncol(clin_data)){
   row.names(mm) <- clin_data$patientID
   
   #voom transformation
-  d <- voom(expression_data_cleaned, mm)
+  d <- voom(expression_data_cleaned)
   
   #Estimate the correlation between duplicate spots
   corfit <- duplicateCorrelation(d, mm)
