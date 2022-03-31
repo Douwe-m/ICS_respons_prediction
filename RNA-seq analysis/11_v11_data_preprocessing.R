@@ -25,15 +25,16 @@ patient_data <- patient_data %>%
 counts_filtered <- counts_filtered %>%
   select(which(colnames(counts_filtered) %in% patient_data$idnr))
 
-#Create a DGEList object
+#Get normalized counts
+##Create a DGEList object
 d0 <- DGEList(counts_filtered)
 
-#Filter lowly expressed genes
+##Filter lowly expressed genes
 keep <- filterByExpr(d0)
 d0 <- d0[keep, , keep.lib.sizes = F]
 
-#Normalize counts
+##Normalize counts
 d1 <- calcNormFactors(d0)
 
-#Get TMM normalized counts
-norm_counts <- cpm(d1, log = T)
+##Get TMM normalized counts
+norm_counts <- as.data.frame(cpm(d1, log = T))

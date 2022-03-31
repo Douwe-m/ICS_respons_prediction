@@ -3,7 +3,7 @@
 #2) A collection of gene sets as a list
 
 #Genes of interest
-gene_set <- list("d_ccq" = DEG_d_ccq %>% 
+gene_set <- list("d_ccq_sig" = DEG_d_ccq %>% 
                    filter(FDR <= 0.10) %>% 
                    pull(ensembl_gene_id))
 
@@ -14,7 +14,7 @@ gsva_es_cleaned <- gsva_es %>%
   t() %>% 
   as.data.frame() %>% 
   rownames_to_column("patient") %>% 
-  rename(enrichment_score = d_ccq) %>% 
+  rename(enrichment_score = d_ccq_sig) %>% 
   mutate(patient = as.numeric(patient)) %>% 
   left_join(patient_data %>% 
               select(idnr, d_ccq, d_fev_pred, d_rvtlc),
@@ -25,7 +25,7 @@ gsva_es_cleaned <- gsva_es %>%
 gsva_es_cleaned %>% 
   ggplot(aes(x = enrichment_score, y = value, group = factor(parameter))) +
     geom_point() +
-    geom_smooth(method = "lm") +
+    geom_smooth(method = "lm", se = F) +
     labs(x = "Enrichment score", y = "Clinical parameter") +
     facet_wrap(. ~ parameter, ncol = 2, scales = "free") 
 
