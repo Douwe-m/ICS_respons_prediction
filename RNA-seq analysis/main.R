@@ -9,6 +9,7 @@ source("RNA-seq analysis/10_data_preprocessing.R", echo = T)
 source("RNA-seq analysis/20_gene_expression_analysis.R", echo = T)
 
 
+
 #-------------Identified DEGs with change in clin. para. after 6 months -------------
 #read data files
 source("RNA-seq analysis/00_load_data.R", echo = T)
@@ -20,7 +21,14 @@ source("RNA-seq analysis/10_data_preprocessing.R", echo = T)
 source("RNA-seq analysis/30_data_visualisation.R", echo = T)
 
 #GSVA analysis
-source("RNA-seq analysis/40_GSVA_analysis.R", echo = T) #Why not compare signature with all patients with or without counts?
+source("RNA-seq analysis/40_GSVA_analysis.R", echo = T)
+
+#Prepare data for MLR
+source(here::here("RNA-seq analysis", "50_MLR_data_prep.R"), echo = T)
+
+#Feature selection and MLR
+source(here::here("Microarray analysis", "50_MLR_analysis.R"), echo = T)
+
 
 
 #-------------Identified DEGs with change in clin. para. after 30 months -------------
