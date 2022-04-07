@@ -2,6 +2,7 @@
 library(tidyverse)
 library(edgeR)
 library(GSVA)
+library(psych)
 
 #read count data
 counts <- read.delim(
@@ -14,7 +15,7 @@ gene_symbols <- read.delim(
   sep = ",", header = T)
 
 #load patient data
-patient_data <- haven::read_sav(
+patient_data_raw <- haven::read_sav(
   "D:/AFO/Data/GLUCOLD/GLUCOLD - Patients/2015-11-24 GLUCOLD database (totaal, 114pt).sav")
 
 #Load normalized counts
