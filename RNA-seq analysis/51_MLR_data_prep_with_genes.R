@@ -17,6 +17,6 @@ patient_data_subset <- patient_data_subset %>%
 
 #Drop columns that will not be used in the analysis
 vars <- patient_data_subset %>% 
-  select(-treatment, -geslacht, -rookjaar, -rooknuv1, -ccqtotalv3, -rvtlcpredv3, -fevnapredv3, -signature) %>% 
+  select(-treatment, -geslacht, -rookjaar, -rooknuv1, -ccqtotalv3, -rvtlcpredv3, -fevnapredv3) %>% 
   drop_na()
   
