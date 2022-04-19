@@ -4,7 +4,7 @@ counts_filtered <- counts %>%
   rename_with(~gsub("_1|X", "", .x))
 
 #Select required columns
-patient_data <- patient_data %>% 
+patient_data <- patient_data_raw %>% 
   select(idnr, treatment, geslacht, lftv1, rookjaar, rooknuv1, packyearv1, 
          ccqtotalv1, ccqtotalv11, rvtlcpredv1, rvtlcpredv11, fevnapredv1, fevnapredv11) 
 
