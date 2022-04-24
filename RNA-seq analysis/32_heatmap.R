@@ -1,4 +1,5 @@
 library(RColorBrewer)
+library(pheatmap)
 
 GOI <- DEG_d_ccq %>% 
   filter(FDR <=0.10) %>% 
@@ -14,4 +15,15 @@ heatmap_data <- norm_counts %>%
   column_to_rownames("gene_symbol") %>% 
   as.matrix()
 
-heatmap(heatmap_data, col = colorRampPalette(brewer.pal(8, "YlOrRd"))(25))
+heatmap_annotation <- patient_data %>% 
+  select(idnr, lftv1, treatment, rooknuv1) %>% 
+  mutate(treatment = case_when(treatment == 2 ~ "ICS+LABA", 
+                           treatment == 3 ~ "ICS",
+                           treatment == 4 ~ "ICS+placebo")) %>% 
+  mutate(rooknuv1 = ifelse(rooknuv1 == 0, "No", "Yes")) %>% 
+  column_to_rownames("idnr")
+
+
+pheatmap(heatmap_data,
+         color = colorRampPalette(brewer.pal(8, "YlOrRd"))(25),
+         annotation_col = heatmap_annotation)
