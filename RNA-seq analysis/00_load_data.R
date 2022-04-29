@@ -4,19 +4,21 @@ library(edgeR)
 library(GSVA)
 library(psych)
 
+data_dir <- "C:/Users/douwe/Documents/Data"
+
 #read count data
 counts <- read.delim(
-  "D:/AFO/Data/GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/GLUCOLDhumangeneexpression.txt", 
+  file.path(data_dir, "GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/GLUCOLDhumangeneexpression.txt"), 
   sep = ";", header = T, row.names = 1)
 
 #Gene symbols
 gene_symbols <- read.delim(
-  "D:/AFO/Data/GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/genes_info_hg37.csv", 
+  file.path(data_dir, "GLUCOLD/GLUCOLD - mRNA Gene Expression (RNA Seq)/genes_info_hg37.csv"), 
   sep = ",", header = T)
 
 #load patient data
 patient_data_raw <- haven::read_sav(
-  "D:/AFO/Data/GLUCOLD/GLUCOLD - Patients/2015-11-24 GLUCOLD database (totaal, 114pt).sav")
+  file.path(data_dir, "GLUCOLD/GLUCOLD - Patients/2015-11-24 GLUCOLD database (totaal, 114pt).sav"))
 
 #Load normalized counts
 if (file.exists("RNA-seq analysis/output/normalised_counts.csv")){
