@@ -5,6 +5,8 @@ library(GSVA)
 library(psych)
 
 data_dir <- "C:/Users/douwe/Documents/Data"
+data_dir <- "D:/AFO/Data"
+
 
 #read count data
 counts <- read.delim(
