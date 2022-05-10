@@ -10,28 +10,44 @@ gene_set <- list("d_ccq_sig" = DEG_d_ccq %>%
 #Calculate GSVA enrichment scores
 gsva_es <- gsva(as.matrix(norm_counts), gene_set)
 
-gsva_es_cleaned <- gsva_es %>% 
-  t() %>% 
-  as.data.frame() %>% 
-  rownames_to_column("patient") %>% 
-  rename(enrichment_score = d_ccq_sig) %>% 
-  mutate(patient = as.numeric(patient)) %>% 
-  left_join(patient_data %>% 
+gsva_es_cleaned <- gsva_es %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("patient") %>%
+  rename(enrichment_score = d_ccq_sig) %>%
+  mutate(patient = as.numeric(patient)) %>%
+  left_join(patient_data %>%
               select(idnr, d_ccq, d_fev_pred, d_rvtlc),
-            by = c("patient" = "idnr")) %>% 
+            by = c("patient" = "idnr")) %>%
   pivot_longer(3:5, names_to = "parameter", values_to = "value")
 
-#Plot change in clinical parameters with enrichment score
-gsva_es_cleaned %>% 
-  ggplot(aes(x = enrichment_score, y = value, group = factor(parameter))) +
-    geom_point() +
-    geom_smooth(method = "lm", se = F) +
-    labs(x = "Enrichment score", y = "Clinical parameter") +
-    facet_wrap(. ~ parameter, ncol = 2, scales = "free") 
+#Calculate correlations
+gsva_es_cleaned %>%
+  group_by(parameter) %>%
+  summarise(COR = cor.test(enrichment_score , value, method = "spearman", exact = F)$estimate,
+            pval = cor.test(enrichment_score, value, method = "spearman", exact = F)$p.value) %>%
+  print()
+
+
+#Calculate GSVA enrichment scores
+gsva_es_v11 <- gsva(as.matrix(norm_counts_v11), gene_set)
+
+gsva_es_cleaned_v11 <- gsva_es_v11 %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("patient") %>%
+  rename(enrichment_score = d_ccq_sig) %>%
+  mutate(patient = as.numeric(patient)) %>%
+  left_join(patient_data_v11 %>%
+              select(idnr, d_ccq, d_fev_pred, d_rvtlc),
+            by = c("patient" = "idnr")) %>%
+  pivot_longer(3:5, names_to = "parameter", values_to = "value") %>%
+  drop_na()
 
 #Calculate correlations
-gsva_es_cleaned %>% 
-  group_by(parameter) %>% 
-  summarise(COR = cor.test(enrichment_score , value, method = "spearman", exact = F)$estimate, 
-            pval = cor.test(enrichment_score, value, method = "spearman", exact = F)$p.value) %>% 
+gsva_es_cleaned_v11 %>%
+  group_by(parameter) %>%
+  summarise(COR = cor.test(enrichment_score , value, method = "spearman", exact = F)$estimate,
+            pval = cor.test(enrichment_score, value, method = "spearman", exact = F)$p.value) %>%
   print()
+
