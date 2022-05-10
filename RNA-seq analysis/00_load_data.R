@@ -3,9 +3,16 @@ library(tidyverse)
 library(edgeR)
 library(GSVA)
 library(psych)
+library(ggpubr)
+library(ggplotify)
+library(ggrepel)
+library(ggtext)
+library(RColorBrewer)
+library(pheatmap)
+library(patchwork)
 
 data_dir <- "C:/Users/douwe/Documents/Data"
-data_dir <- "D:/AFO/Data"
+# data_dir <- "D:/AFO/Data"
 
 
 #read count data

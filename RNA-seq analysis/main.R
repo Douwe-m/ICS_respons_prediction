@@ -26,7 +26,7 @@ source("RNA-seq analysis/40_GSVA_analysis.R", echo = T)
 source(here::here("RNA-seq analysis", "50_MLR_data_prep.R"), echo = T)
 
 #Feature selection and MLR
-source(here::here("RNA-seq analysis", "52_MLR_analysis.R"), echo = T)
+source(here::here("RNA-seq analysis", "51_MLR_analysis.R"), echo = T)
 
 
 
