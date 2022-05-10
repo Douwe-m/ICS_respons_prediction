@@ -29,12 +29,12 @@ gene_symbols <- read.delim(
 patient_data_raw <- haven::read_sav(
   file.path(data_dir, "GLUCOLD/GLUCOLD - Patients/2015-11-24 GLUCOLD database (totaal, 114pt).sav"))
 
-#Load normalized counts
-if (file.exists("RNA-seq analysis/output/normalised_counts.csv")){
-  norm_counts <- read.table("RNA-seq analysis/output/normalised_counts.csv", 
-                            sep = ",", 
-                            header = T)
-}
+# #Load normalized counts
+# if (file.exists("RNA-seq analysis/output/normalised_counts.csv")){
+#   norm_counts1 <- read.table("RNA-seq analysis/output/normalised_counts.csv",
+#                             sep = ",",
+#                             header = T)
+# }
 
 #Load results from DGE analysis
 if (file.exists("RNA-seq analysis/output/DEG_d_ccq_v3_baseline.csv")){
