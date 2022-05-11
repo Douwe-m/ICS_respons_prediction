@@ -1,7 +1,7 @@
 #Plot change in clinical parameters with enrichment score after 6 months
 signature_corr_6months <- ggplot(gsva_es_cleaned, aes(x = enrichment_score, y = value)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  # geom_smooth(method = "lm", se = F) +
   stat_cor(method = "spearman") +
   labs(x = "Enrichment score", y = "Clinical parameter") +
   scale_x_continuous(breaks = seq(-0.5, 1, 0.5), limits = c(-0.75, 1)) +
@@ -17,7 +17,7 @@ signature_corr_6months <- ggplot(gsva_es_cleaned, aes(x = enrichment_score, y = 
 #Plot change in clinical parameters with enrichment score after 30 months
 signature_corr_30months <- ggplot(gsva_es_cleaned_v11, aes(x = enrichment_score, y = value)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  # geom_smooth(method = "lm", se = F) +
   stat_cor(method = "spearman") +
   labs(x = "Enrichment score", y = "Clinical parameter") +
   scale_x_continuous(breaks = seq(-0.5, 1, 0.5), limits = c(-0.75, 0.6)) +
